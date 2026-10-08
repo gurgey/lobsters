@@ -152,7 +152,7 @@ class ApplicationController < ActionController::Base
   # https://web.archive.org/web/20180108083712/http://umaine.edu/lobsterinstitute/files/2011/12/LobsterColorsWeb.pdf
   def set_traffic_style
     @traffic_intensity = "?"
-    @traffic_style = "background-color: #ac130d;"
+    @traffic_style = "background-color: #000000;"
     return true if Rails.application.read_only? ||
       agent_is_spider? ||
       %w[json rss].include?(params[:format])
