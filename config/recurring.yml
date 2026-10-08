@@ -14,9 +14,6 @@ production:
   populate_comment_stats:
     command: CommentStat.daily_fill!
     schedule: every day at 4:00am
-  restic:
-    class: ResticJob
-    schedule: every day at 1 am
   sitemap:
     command: 'SitemapGenerator::Interpreter.run(config_file: ENV["CONFIG_FILE"], verbose: false)'
     schedule: every day at 2 am
