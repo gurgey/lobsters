@@ -649,11 +649,6 @@ class Story < ApplicationRecord
       raise "#{u.username} does not have permission to use privileged tag(s): #{privileged.map(&:tag).join(" ")}"
     end
 
-    if tags.reject { |t| t.is_media? }.empty?
-      errors.add(:base, "Must have at least one non-media (PDF, video) " \
-        "tag.  If no tags apply to your content, it probably doesn't " \
-        "belong here.")
-    end
   end
 
   def comments_anchor

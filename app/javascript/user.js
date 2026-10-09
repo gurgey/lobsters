@@ -313,8 +313,13 @@ export class _LobstersFunction {
           // Iterating up the comments tree to the nearest parent. If there isn't one, we are creating
           // a top-level comment, so find the top of the comments tree.
           const comments = form.closest('.comments') || qS('.comments')
-          parentSelector(form, '.comment_form_container').remove()
-
+          // old code removed comment box entirely
+	  //parentSelector(form, '.comment_form_container').remove()
+          const textarea = form.querySelector('textarea');
+          if (textarea) textarea.value = '';
+          const preview = qS(form.parentElement, '.preview');
+          if (preview) preview.innerHTML = '';
+	
           // if comments is .comments1, it is top-level comment: insert it deeper
           if (comments.classList.contains('comments1')) {
             comments.querySelector('#story_comments').insertAdjacentHTML("afterbegin", text)

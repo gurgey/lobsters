@@ -1,8 +1,5 @@
 <%# locals: (story:, f:, suggesting: false) -%>
-<% guidelines = "Use this textarea for stories without a URL, to link additional context, or to paste abstracts from PDF papers.
-
-Please don't use this to promote the story, summarize the post, or explain why you posted it.
-See the guidelines below for more."
+<% guidelines = "Write your commentary here."
 %>
 <%= render :partial => "stories/form_errors", :locals => { :f => f, :story => f.object, suggesting: suggesting } %>
 
@@ -26,8 +23,8 @@ See the guidelines below for more."
 
   <%= f.label :title %>
   <%= f.text_field :title, required: true, minlength: Story::TITLE_MIN_LENGTH, maxlength: Story::TITLE_MAX_LENGTH %>
-  <p class="title-reminder">
-    Please remove extraneous components from titles such as the name of the site, blog, section, and author.
+  <p class="title-reminder" style="display: none !important;">
+    If you are seeing this message, there has been an error (title reminder). Please contact the administrator.
     <span class="title-reminder-thanks">Thanks!</span>
   </p>
 
@@ -40,6 +37,7 @@ See the guidelines below for more."
     </p>
   <% end %>
 
+  <div hidden>
   <%= f.label :tags %>
   <%= f.select "tags", options_for_select(
     Tag.all_with_filtered_counts_for(@user).map{|t|
@@ -54,7 +52,8 @@ See the guidelines below for more."
       end
 
       [ "#{t.tag} - #{t.description}", t.tag, { "data-title" => ERB::Util.html_escape(html), "data-tag-css" => t.css_class, "data-vibe" => (t.tag == "vibecoding") ? 'ai' : '' } ]},
-    f.object.tags.map(&:tag)), {}, { multiple: true, required: true } %>
+    f.object.tags.map(&:tag)), {}, { multiple: true, required: false } %>
+  </div>
 
   <% if f.object.id && !suggesting && f.object.suggested_tagging_times.any? %>
     <p class="hint">
@@ -78,70 +77,24 @@ See the guidelines below for more."
     <%= f.text_area :description, rows: 8, placeholder: guidelines %>
     <%= render :partial => "global/markdownhelp", :locals => { allow_images: @story.can_have_images? } %>
 
-    <%= tag.details open: show_guidelines?(@user) ? true : nil do %>
-      <summary>Story submission guidelines</summary>
-      <ul>
-        <li><p>
-          Ideally, use the story's original title and
-          <strong>remove the name of the site, blog, event, section, and author</strong>.
-          We also tone down clickbait titles:
-          <ul>
-            <li>remove hyperbole and moralizing ("The reckless bug that caused the apocalypse" &rarr; "Debugging a null reference")</li>
-            <li>add missing information ("The bug at the heart of the npm ecosystem" &rarr; "Design flaw in npm manifests")</li>
-            <li>rewrite second person ("10 Ruby features you don't know" &rarr; "Uncommon Ruby hash methods")</li>
-          </ul>
-        </p></li>
 
-        <li><p>
-        When the story being submitted is more than a year or so old,
-        please add the year the story was written to the post title in
-        parentheses.
-        </p></li>
+    <div style="grid-column: 1 / -1;">
+  <p>Please obey the following rules:</p>
+  <ul style="list-style: disc; padding-left: 1.5em;">
+    <li>If content is LLM generated (and if it's not obvious), you must disclose that it is.</li>
+    <li>Keep profanity and insults to a minimum.</li>
+    <li>No links to pirated content.</li>
+  </ul>
+</div>
 
-        <li><p>
-        When submitting a URL, the text field is optional and should only
-        be used when additional context or explanation of the URL is
-        needed.  Commentary or opinion should be reserved for a comment,
-        so that it can be voted on separately from the story.
-        </p></li>
-
-        <li><p>
-          If no <a href="/tags">tags</a> clearly apply to the story you are submitting, chances are it does not belong here.
-          There's a <a href="/about#topicality">topicality guideline</a> and you can skim the <a href="/moderations?moderator=%28All%29&what%5Bstories%5D=stories">modlog</a> for example removals.
-        </p></li>
-
-        <li><p>
-        To be able to easily submit a page you're viewing in your browser
-        to <%= Rails.application.name %>, drag this bookmarklet to your
-        bookmark bar:
-        [<a href="javascript:{window.open(%22<%= Rails.application.root_url
-        %>stories/new?url=%22+encodeURIComponent(document.location)+<%-
-        %>%22&title=%22+encodeURIComponent(document.title));%20void(0);}<%
-        %>">Submit to <%= Rails.application.name %></a>].
-        You'll be taken to this page with the viewed page's URL and title.
-        (It can't recognize and remove blog/author names for you, though.)
-        </p></li>
-      </ul>
-    <% end %>
+        <p>
+        For now, I am treating this forum as if it is my living room. If I don't personally find your posts to be of value, I reserve the right to ban you or ask you to leave.
+        </p>
   <% end %>
 </div>
 
 <% unless suggesting %>
   <div class="box">
-    <div class="labelled_grid">
-      <label class="for_checkbox"><%= f.label :user_is_author, "Author" %></label>
-      <div>
-        <%= f.check_box :user_is_author %>
-        <%= f.label :user_is_author,
-          (f.object.id && f.object.user_id != @user.id ? "Submitter is" : "I am") +
-          " the author of the story at this URL (or this text)",
-          :class => "normal" %>
-      </div>
-
-      <p class="self-promo-warning">
-        If you're new here, please review the <a href="/about#self-promo">self-promo guideline</a>.
-      </p>
-
       <label class="for_checkbox"><%= f.label :user_is_following, "Follow" %></label>
       <div>
         <%= f.check_box :user_is_following %>
